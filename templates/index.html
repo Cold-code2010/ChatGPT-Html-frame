@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        console.log("114514");
+    </script>
+    <title>ChatGPT Interface</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            text-align: center;
+        }
+        
+        .input-row {
+            margin-bottom: 10px;
+        }
+        
+        .input-field {
+            width: 400px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .model-select {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #555;
+            color: #fff;
+        }
+        
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .output-row {
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .output-text {
+            background-color: #222;
+            padding: 30px;
+            border-radius: 5px;
+            width: 600px;
+            height: 400px;
+            overflow-y: auto;
+            resize: none;
+            color: #fff;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ChatGPT Interface</h1>
+        <div class="input-row">
+            <input type="text" id="user-input" class="input-field" placeholder="Enter your message..." autocomplete="off">
+        </div>
+        <div class="input-row">
+            <input type="text" id="openai-key-input" class="input-field" placeholder="Enter your OpenAI API key..." autocomplete="off">
+        </div>
+        <div class="input-row">
+            <select id="model-select" class="model-select">
+                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                <option value="davinci">davinci</option>
+                <!-- Add more model options here if needed -->
+            </select>
+        </div>
+        <div class="input-row">
+            <input type="submit" value="Send" class="submit-btn" onclick="submitForm(event)">
+        </div>
+        <div class="output-row">
+            <textarea id="chat-output" class="output-text" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            var userInput = document.getElementById("user-input").value;
+            var openaiKey = document.getElementById("openai-key-input").value;
+            var selectedModel = document.getElementById("model-select").value;
+
+            // Send AJAX request to the backend processing
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/process", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displayResponse(response);
+                }
+            };
+            xhr.send(JSON.stringify({ "user_input": userInput, "openai_key": openaiKey, "model": selectedModel }));
+            // document.getElementById("user-input").value = "";
+        }
+
+        function displayResponse(response) {
+            var chatOutput = document.getElementById("chat-output");
+            chatOutput.value += "User: " + response.user_input + "\n";
+            chatOutput.value += "ChatGPT: " + response.gpt_response + "\n";
+        }
+    </script>
+</body>
+</html>
